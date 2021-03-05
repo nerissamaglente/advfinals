@@ -8,6 +8,10 @@
     if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         if (empty(trim($_POST['username']))) {
             $usernameErr = 'Please enter a username';
+        } else if(preg_match('/[^a-zA-Z0-9]+/',trim($_POST['username']))){
+          $usernameErr = 'Enter only alphanumeric';
+        } else if (strlen(trim($_POST['username'])) > 10) {
+          $usernameErr = 'maximum of 10 characters only';
         } else {
             $sql = 'SELECT * FROM users WHERE username = ?';
             $statement = mysqli_prepare($link, $sql);
@@ -16,7 +20,6 @@
                 $paramUsername = trim($_POST['username']);
                 if (mysqli_stmt_execute($statement)) {
                     mysqli_stmt_store_result($statement);
-
                     if (mysqli_stmt_num_rows($statement) == 1) {
                         $usernameErr = 'This username is already taken';
                     } else {
